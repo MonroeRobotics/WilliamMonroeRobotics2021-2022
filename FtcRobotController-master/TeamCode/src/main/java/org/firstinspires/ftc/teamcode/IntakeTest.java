@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.util.Range;
 
 
 @TeleOp
-@Disable
 
 public class IntakeTest extends LinearOpMode {
 

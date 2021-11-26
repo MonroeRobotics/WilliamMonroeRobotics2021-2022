@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -41,6 +42,7 @@ public class DriveProgram extends LinearOpMode{
         long time;
         long checkTime;
         long checkTimeEnd = 0;
+        double servoPos = 0.97;
         //endregion
         //endregion
 
@@ -210,7 +212,7 @@ public class DriveProgram extends LinearOpMode{
 
             //endregion
 
-            dropServo.setPosition(servoPos)
+            dropServo.setPosition(servoPos);
 
             //region Manual Motor And Arm Movement
 

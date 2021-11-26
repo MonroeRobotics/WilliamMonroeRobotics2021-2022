@@ -146,7 +146,7 @@ public class LinearMotionTest extends LinearOpMode{
             
             //endregion
 
-            dropServo.setPosition(servoPos)
+            dropServo.setPosition(servoPos);
 
             //region Manual Motor And Arm Movement
 
