@@ -7,7 +7,9 @@
     <list default="true" id="269d890f-1155-4d42-ae68-cfb0970514ed" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoTestNew.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/DriveProgram.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/DriveProgram.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ImageRec.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ImageRec.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/LinearMotionTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/LinearMotionTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/MechWhellTesdt.java" beforeDir="false" afterPath="$PROJECT_DIR$/notInUse/MechWhellTesdt.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MechWhellTesdt.java" beforeDir="false" />
     </list>
@@ -51,7 +53,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
