@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import java.util.concurrent.TimeUnit;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp
+@TeleOp(group = "Test")
 
 public class LinearMotionTest extends LinearOpMode{
 
@@ -29,7 +30,7 @@ public class LinearMotionTest extends LinearOpMode{
         double servoPos;
 
         //region hardware map
-        lineMotor = hardwareMap.get(DcMotor.class, "LeverMotor");
+        lineMotor = hardwareMap.get(DcMotor.class, "leverMotor");
         lineMotor2 = hardwareMap.get(DcMotor.class, "backMotor");
         dropServo = hardwareMap.servo.get("dropServo");
 

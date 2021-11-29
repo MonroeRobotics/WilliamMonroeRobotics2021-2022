@@ -1,43 +1,49 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@TeleOp
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+@TeleOp(name = "Drive",group = "Main")
 // Wheel Movement
 public class DriveProgram extends LinearOpMode{
-    //region Declare Hardware Objects
+    /* //region Declare Hardware Objects
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backRight;
     private DcMotor backLeft;
-    private DcMotor lineMotor;
     private DcMotor lineMotor2;
     private Servo dropServo;
     private DcMotor intakeMotor = null;
     //endregion
-    
+    */
     public void runOpMode(){
         //region Variables Setup
         double motorPower = 1;
         double leftstickX;
         double leftstickY;
-        double rightstickX;
-        double rightstickY;
         double direction;
         double magnitude;
         double fRight;
         double bRight;
         double bLeft;
         double fLeft;
-        double fLeftBRight;
         double turn;
 
+        boolean isPrep = true;
+        boolean servoBool = true;
+        boolean servoRel = true;
+        boolean prepRel = true;
+
+
         //region Set Up Variables for Timer
-        long lastTestTime = 0;
-        long lastTime = 0;
         int stage = 0;
         long time;
         long checkTime;
@@ -47,28 +53,36 @@ public class DriveProgram extends LinearOpMode{
         //endregion
 
         //region Hardware Map
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        intakeMotor  = hardwareMap.get(DcMotor.class, "intakeMotor");
-        lineMotor = hardwareMap.get(DcMotor.class, "LeverMotor");
-        lineMotor2 = hardwareMap.get(DcMotor.class, "backMotor");
-        dropServo = hardwareMap.servo.get("dropServo");
+        DcMotor backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        DcMotor backRight = hardwareMap.get(DcMotor.class, "backRight");
+        DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        DcMotor intakeMotor  = hardwareMap.get(DcMotor.class, "intakeMotor");
+        DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
+        DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
+        Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
+        CRServo wheelServo = hardwareMap.get(CRServo.class, "wheelServo");
+        DistanceSensor rangeSen = hardwareMap.get(DistanceSensor.class, "rangeSen");
         //endregion
-        
+
+        lineMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lineMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        wheelServo.setDirection(DcMotorSimple.Direction.FORWARD);
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
 
         while (opModeIsActive()){
-            
+
+            double distance = rangeSen.getDistance(DistanceUnit.INCH);
+
             leftstickX = this.gamepad1.left_stick_x;
             leftstickY = -this.gamepad1.left_stick_y;
             
             turn = -this.gamepad1.right_stick_x;
-
             //region Math For Wheel Movement
             direction = Math.atan2(leftstickY, leftstickX);
             magnitude = Math.sqrt(Math.pow(leftstickX, 2) + Math.pow(leftstickY, 2)) * 1.5;
@@ -108,20 +122,112 @@ public class DriveProgram extends LinearOpMode{
             //endregion
 
             //region Manual Servo Movement
-            if(this.gamepad1.right_trigger > 0.5){
+            if(servoBool && this.gamepad1.left_trigger > 0.5 && servoRel){
                 servoPos = .8;
+                servoBool = false;
+                servoRel = false;
             }
 
-            if(this.gamepad1.left_trigger > 0.5){
+            else if(!servoBool && this.gamepad1.left_trigger > 0.5 && servoRel){
                 servoPos = .97;
+                servoBool = true;
+                servoRel = false;
+            }
+            if (this.gamepad1.left_trigger < 0.2 && servoRel == false) {
+                servoRel = true;
+            }
+
+            if (this.gamepad1.right_trigger > 0.5){
+                wheelServo.setPower(1.0);
+            }
+            else {
+                wheelServo.setPower(0);
             }
 
             //endregion
 
+            //region Prep For Pickup
+            if(isPrep && this.gamepad1.b && stage == 0){
+                time = 500;
+                checkTime =  System.currentTimeMillis();
+                checkTimeEnd = checkTime + time;
+                stage = 7;
+                servoPos = 0.7;
+                isPrep = false;
+            }
+
+            if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 7) {
+                lineMotor.setPower(1);
+                lineMotor2.setPower(-0.5);
+                telemetry.addData("Running", "True");
+            }
+
+            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 7){
+                time = 30;
+                checkTime =  System.currentTimeMillis();
+                checkTimeEnd = checkTime + time;
+                stage = 8;
+                telemetry.addData("Running", "True");
+            }
+
+            if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 8) {
+                lineMotor.setPower(1);
+                telemetry.addData("Running", "True");
+            }
+
+            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 8) {
+                stage = 0;
+                lineMotor.setPower(0);
+                lineMotor2.setPower(0);
+                telemetry.addData("Running", "False");
+            }
+
+            if(!isPrep && this.gamepad1.b && stage == 0) {
+                time = 520;
+                checkTime =  System.currentTimeMillis();
+                checkTimeEnd = checkTime + time;
+                lineMotor.setPower(0);
+                lineMotor2.setPower(0);
+                servoPos = 0.97;
+                stage = 9;
+                isPrep = true;
+            }
+
+
+            //while timer is active and stage 4 is active move arm down
+            if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 9) {
+                lineMotor.setPower(-0.9);
+                lineMotor2.setPower(1);
+                telemetry.addData("Running", "True");
+            }
+
+            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 9){
+                time = 30;
+                checkTime =  System.currentTimeMillis();
+                checkTimeEnd = checkTime + time;
+                stage = 10;
+                telemetry.addData("Running", "True");
+            }
+
+            if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 10) {
+                lineMotor.setPower(1);
+                telemetry.addData("Running", "True");
+            }
+
+            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 10){
+                stage = 0;
+                lineMotor.setPower(0);
+                lineMotor2.setPower(0);
+                telemetry.addData("Running", "False");
+            }
+            //endregion
+
             //region Stage Movement of arm
             //when X is clicked start timer and switch
-            if (this.gamepad1.x && stage == 0){
-                time = 1000;
+            if (this.gamepad1.x && stage == 0 && isPrep){
+                lineMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                lineMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                time = 700;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 stage = 1;
@@ -136,7 +242,7 @@ public class DriveProgram extends LinearOpMode{
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 1){
-                time = 4900;
+                time = 3500;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -155,7 +261,7 @@ public class DriveProgram extends LinearOpMode{
             /* when time exceeds limit, start new time, switch stage, and move servo
             (holds in same spot for a while) */
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 2){
-                time = 2000;
+                time = 1400;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -166,7 +272,7 @@ public class DriveProgram extends LinearOpMode{
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 3){
-                time = 3400;
+                time = 2800;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -185,7 +291,7 @@ public class DriveProgram extends LinearOpMode{
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 4){
-                time = 600;
+                time = 620;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -202,8 +308,21 @@ public class DriveProgram extends LinearOpMode{
                 telemetry.addData("Running", "True");
             }
 
-            //when timer is up and stage 5 is active stop motors and reset stage
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 5){
+                time = 30;
+                checkTime =  System.currentTimeMillis();
+                checkTimeEnd = checkTime + time;
+                stage = 6;
+                telemetry.addData("Running", "True");
+            }
+
+            if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 6) {
+                lineMotor.setPower(1);
+                telemetry.addData("Running", "True");
+            }
+
+            //when timer is up and stage 5 is active stop motors and reset stage
+            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 6){
                 stage = 0;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
@@ -216,21 +335,27 @@ public class DriveProgram extends LinearOpMode{
 
             //region Manual Motor And Arm Movement
 
+            if(stage == 0 && !this.gamepad1.left_bumper && !this.gamepad1.right_bumper && !this.gamepad1.dpad_right && !this.gamepad1.dpad_left) {
+                lineMotor.setPower(0);
+                lineMotor2.setPower(0);
+                telemetry.addData("Running", "False");
+            }
+
             //region Manual Motor Movement for adjustment
             if (this.gamepad1.dpad_left){
-                lineMotor2.setPower(-1);
+                lineMotor2.setPower(-1.0);
                 telemetry.addData("Running", "True");
             }
             if (this.gamepad1.dpad_right){
-                lineMotor2.setPower(1);
+                lineMotor2.setPower(1.0);
                 telemetry.addData("Running", "True");
             }
             if (this.gamepad1.right_bumper){
-                lineMotor.setPower(1);
+                lineMotor.setPower(1.0);
                 telemetry.addData("Running", "True");
             }
             if (this.gamepad1.left_bumper){
-                lineMotor.setPower(-1);
+                lineMotor.setPower(-1.0);
                 telemetry.addData("Running", "True");
             }
 
@@ -238,26 +363,21 @@ public class DriveProgram extends LinearOpMode{
 
             //region Arm Movement
             if (this.gamepad1.dpad_up){
-                lineMotor.setPower(1);
+                lineMotor.setPower(1.0);
                 lineMotor2.setPower(-0.5);
                 telemetry.addData("Running", "True");
 
             }
             if (this.gamepad1.dpad_down){
                 lineMotor.setPower(-0.9);
-                lineMotor2.setPower(1);
+                lineMotor2.setPower(1.0);
                 telemetry.addData("Running", "True");
 
             }
 
             //endregion
 
-            else {
-                lineMotor.setPower(0);
-                lineMotor2.setPower(0);
-                telemetry.addData("Running", "False");
 
-            }
 
             //endregion
 
@@ -270,12 +390,9 @@ public class DriveProgram extends LinearOpMode{
 
             //region Telemetry Data
             telemetry.addData("Status", "Initialized");
-            telemetry.addData("leftX", leftstickX);
-            telemetry.addData("leftY", leftstickY);
-            telemetry.addData("Direction", direction);
-            telemetry.addData("magnitude", magnitude);
-            telemetry.addData("fRight", fRight);
-            telemetry.addData("bLeft", bLeft);
+            telemetry.addData("Arm Motor", lineMotor.getCurrentPosition());
+            telemetry.addData("Distance:", distance);
+            telemetry.addData("Stage", stage);
             telemetry.update();
             //endregion
         }

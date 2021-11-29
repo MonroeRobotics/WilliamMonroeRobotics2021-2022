@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp
+@TeleOp(group = "test")
+@Disabled
 
 public class IntakeTest extends LinearOpMode {
 
