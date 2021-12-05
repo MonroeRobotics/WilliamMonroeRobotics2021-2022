@@ -37,8 +37,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(group = "Test")
 
-public class AutoDropTest extends LinearOpMode{
-    
+public class AutoDropTest2 extends LinearOpMode{
+
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backRight;
@@ -69,22 +69,22 @@ public class AutoDropTest extends LinearOpMode{
     }
 
     public void moveForTime(float time, float deg, double magnitude){
-        
+
         double fRight;
         double bRight;
         double bLeft;
         double fLeft;
 
         double direction = deg * (Math.PI / 180);
-        
+
         double checkTime =  System.currentTimeMillis();
         double checkTimeEnd = checkTime + time;
-        
+
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        
+
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
 
 
@@ -92,32 +92,47 @@ public class AutoDropTest extends LinearOpMode{
             bLeft = (-Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude);
             bRight = (Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude);
             fLeft = (- Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude);
-            
+
             if (fRight > 1 || fRight < -1){
                 fLeft = (fLeft / Math.abs(fRight));
                 fRight = (fRight / Math.abs(fRight));
                 bRight = (bRight / Math.abs(fRight));
                 bLeft = (bLeft / Math.abs(fRight));
             }
-        
+
             if (fLeft > 1 || fLeft < -1){
                 fLeft = (fLeft / Math.abs(fLeft));
                 fRight = (fRight / Math.abs(fLeft));
                 bLeft = (bLeft / Math.abs(fLeft));
                 bRight = (bRight / Math.abs(fLeft));
             }
-                
+
             backLeft.setPower(bLeft);
             frontRight.setPower(fRight);
             backRight.setPower(bRight);
             frontLeft.setPower(fLeft);
-            
-            
+
+
         }
         backLeft.setPower(0);
         frontRight.setPower(0);
         backRight.setPower(0);
         frontLeft.setPower(0);
+    }
+
+    public void wheelForTime(float time, double turnPower){
+
+
+        double checkTime =  System.currentTimeMillis();
+        double checkTimeEnd = checkTime + time;
+
+        DcMotor wheelMotor = hardwareMap.get(DcMotor.class, "wheelMotor");
+
+        while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
+            wheelMotor.setPower(turnPower);
+        }
+
+        wheelMotor.setPower(0);
     }
 
     public void dropArm(){
@@ -238,11 +253,11 @@ public class AutoDropTest extends LinearOpMode{
             dropServo.setPosition(servoPos);
         }
     }
-    
+
     @Override
     public void runOpMode() {
-        
-        
+
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -253,13 +268,25 @@ public class AutoDropTest extends LinearOpMode{
 
 
         moveForTime(1000, 270, 1);
-        
-        moveForTime(1300, 180, 1);
+
+        moveForTime(1400, 180, 1);
 
         dropArm();
 
-        moveForTime(3000, 0, 1);
+        moveForTime(2700, 0, 1);
 
-        moveForTime(300, 270, 1);
+        turnForTime(650, 1);
+
+        moveForTime(1100, 0, 1);
+
+        wheelForTime(3000, -1);
+
+        moveForTime(1100, 180, 1);
+
+        turnForTime(600, -1);
+
+        moveForTime(500, 270, 1);
+
+        moveForTime(450, 0, 1);
     }
 }

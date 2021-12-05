@@ -24,6 +24,7 @@ public class DriveProgram extends LinearOpMode{
     private DcMotor intakeMotor = null;
     //endregion
     */
+
     public void runOpMode(){
         //region Variables Setup
         double motorPower = 1;
@@ -40,7 +41,6 @@ public class DriveProgram extends LinearOpMode{
         boolean isPrep = true;
         boolean servoBool = true;
         boolean servoRel = true;
-        boolean prepRel = true;
 
 
         //region Set Up Variables for Timer
@@ -61,14 +61,13 @@ public class DriveProgram extends LinearOpMode{
         DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
         DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
-        CRServo wheelServo = hardwareMap.get(CRServo.class, "wheelServo");
+        DcMotor wheelMotor = hardwareMap.get(DcMotor.class, "wheelMotor");
         DistanceSensor rangeSen = hardwareMap.get(DistanceSensor.class, "rangeSen");
         //endregion
 
         lineMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lineMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        wheelServo.setDirection(DcMotorSimple.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -138,10 +137,10 @@ public class DriveProgram extends LinearOpMode{
             }
 
             if (this.gamepad1.right_trigger > 0.5){
-                wheelServo.setPower(1.0);
+                wheelMotor.setPower(1.0);
             }
             else {
-                wheelServo.setPower(0);
+                wheelMotor.setPower(0);
             }
 
             //endregion
