@@ -137,7 +137,7 @@ public class DriveProgram extends LinearOpMode{
             }
 
             if (this.gamepad1.right_trigger > 0.5){
-                wheelMotor.setPower(1.0);
+                wheelMotor.setPower(-1.0);
             }
             else {
                 wheelMotor.setPower(0);

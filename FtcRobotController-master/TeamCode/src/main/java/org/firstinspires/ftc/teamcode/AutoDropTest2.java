@@ -277,16 +277,16 @@ public class AutoDropTest2 extends LinearOpMode{
 
         turnForTime(650, 1);
 
-        moveForTime(1100, 0, 1);
+        moveForTime(1000, 0, 1);
 
-        wheelForTime(3000, -1);
+        wheelForTime(3500, -1);
 
         moveForTime(1100, 180, 1);
 
         turnForTime(600, -1);
 
-        moveForTime(500, 270, 1);
+        moveForTime(380, 270, 1);
 
-        moveForTime(450, 0, 1);
+        moveForTime(400, 0, 1);
     }
 }
