@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(group = "Test")
-
+@Disabled
 public class LinearMotionTest extends LinearOpMode{
 
     //hardware variables
     private DcMotor lineMotor;
     private DcMotor lineMotor2;
     private Servo dropServo;
-    
+
     public void runOpMode(){
 
         //region Set Up Variables for Timer

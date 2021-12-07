@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(group = "Test")
 
-public class AutoDropTest2 extends LinearOpMode{
+public class AutoDropGoatMode extends LinearOpMode{
 
     private DcMotor frontRight;
     private DcMotor frontLeft;
@@ -277,17 +277,17 @@ public class AutoDropTest2 extends LinearOpMode{
 
         turnForTime(650, 1);
 
-        moveForTime(1000, 0, 1);
+        moveForTime(1100, 0, 1);
 
         wheelForTime(3500, -1);
 
         moveForTime(1100, 180, 1);
 
-        turnForTime(600, -1);
+        turnForTime(1500, -1);
 
-        moveForTime(420, 270, 1);
+        moveForTime(340, 0, 1);
 
-        moveForTime(400, 0, 1);
+        moveForTime(4500, 270, 5);
 
 
     }

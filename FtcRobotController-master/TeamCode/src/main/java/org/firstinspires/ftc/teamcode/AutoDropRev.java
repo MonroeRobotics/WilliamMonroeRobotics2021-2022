@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -37,7 +38,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(group = "Test")
 
-public class AutoDropTest2 extends LinearOpMode{
+public class AutoDropRev extends LinearOpMode{
 
     private DcMotor frontRight;
     private DcMotor frontLeft;
@@ -269,25 +270,25 @@ public class AutoDropTest2 extends LinearOpMode{
 
         moveForTime(1000, 270, 1);
 
-        moveForTime(1400, 180, 1);
+        moveForTime(1400, 0, 1);
 
         dropArm();
 
-        moveForTime(2700, 0, 1);
+        moveForTime(2700, 180, 1);
 
-        turnForTime(650, 1);
+        turnForTime(650, -1);
 
-        moveForTime(1000, 0, 1);
+        moveForTime(1000, 180, 1);
 
-        wheelForTime(3500, -1);
+        wheelForTime(3500, 1);
 
-        moveForTime(1100, 180, 1);
+        moveForTime(1100, 0, 1);
 
-        turnForTime(600, -1);
+        turnForTime(600, 1);
 
         moveForTime(420, 270, 1);
 
-        moveForTime(400, 0, 1);
+        moveForTime(400, 180, 1);
 
 
     }

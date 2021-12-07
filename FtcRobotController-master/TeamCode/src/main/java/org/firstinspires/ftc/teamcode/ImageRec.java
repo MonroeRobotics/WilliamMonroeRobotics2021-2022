@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 
 @TeleOp(name="DriveToPicture", group = "Concept")
-
+@Disabled
 public class ImageRec extends LinearOpMode {
         // Adjust these numbers to suit your robot.
         final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
