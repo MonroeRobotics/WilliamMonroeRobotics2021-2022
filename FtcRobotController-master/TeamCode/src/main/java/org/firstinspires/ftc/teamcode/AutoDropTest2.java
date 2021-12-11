@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(group = "Test")
+@Autonomous(name = "AutoRed", group = "Red")
 
 public class AutoDropTest2 extends LinearOpMode{
 
@@ -43,6 +43,11 @@ public class AutoDropTest2 extends LinearOpMode{
     private DcMotor frontLeft;
     private DcMotor backRight;
     private DcMotor backLeft;
+    private Servo dropServo;
+
+
+
+    double servoPos = 0.85;
 
     public void turnForTime(float time, double turnPower){
 
@@ -139,11 +144,11 @@ public class AutoDropTest2 extends LinearOpMode{
         int stage = 0;
         double checkTime;
         double checkTimeEnd = 0;
-        double servoPos = 0.9;
+        servoPos = 0.85;
 
         DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
         DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
-        Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
+
 
         while (stage < 7) {
             if (stage == 0) {
@@ -213,12 +218,12 @@ public class AutoDropTest2 extends LinearOpMode{
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                time = 620;
+                time = 640;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
-                servoPos = 0.97;
+                servoPos = 0.85;
                 sleep(20);
                 stage = 5;
             }
@@ -257,6 +262,11 @@ public class AutoDropTest2 extends LinearOpMode{
     @Override
     public void runOpMode() {
 
+        dropServo = hardwareMap.get(Servo.class, "dropServo");
+
+        servoPos = 0.85;
+
+        dropServo.setPosition(servoPos);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -269,6 +279,8 @@ public class AutoDropTest2 extends LinearOpMode{
 
         moveForTime(1000, 270, 1);
 
+        sleep(1000);
+
         moveForTime(1400, 180, 1);
 
         dropArm();
@@ -277,7 +289,7 @@ public class AutoDropTest2 extends LinearOpMode{
 
         turnForTime(650, 1);
 
-        moveForTime(1000, 0, 1);
+        moveForTime(1300, 0, 1);
 
         wheelForTime(3500, -1);
 
@@ -287,7 +299,11 @@ public class AutoDropTest2 extends LinearOpMode{
 
         moveForTime(420, 270, 1);
 
+        sleep(1000);
+
         moveForTime(400, 0, 1);
+
+        turnForTime(50, -1);
 
 
     }

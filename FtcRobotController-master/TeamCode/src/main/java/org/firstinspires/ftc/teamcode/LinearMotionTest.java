@@ -36,7 +36,7 @@ public class LinearMotionTest extends LinearOpMode{
 
         //endregion
 
-        servoPos = 0.97;
+        servoPos = 0.95;
         
         waitForStart();
         
@@ -48,7 +48,7 @@ public class LinearMotionTest extends LinearOpMode{
             }
             
             if(this.gamepad1.left_trigger > 0.5){
-                servoPos = .97;
+                servoPos = .95;
             }
 
             //endregion
@@ -125,7 +125,7 @@ public class LinearMotionTest extends LinearOpMode{
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
-                servoPos = 0.97;
+                servoPos = 0.95;
                 sleep(20);
                 stage = 5;
             }

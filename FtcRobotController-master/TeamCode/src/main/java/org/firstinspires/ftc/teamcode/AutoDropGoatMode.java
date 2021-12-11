@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(group = "Test")
+@Autonomous(name = "RedFullGoatMode", group = "Red")
 
 public class AutoDropGoatMode extends LinearOpMode{
 
@@ -43,6 +43,9 @@ public class AutoDropGoatMode extends LinearOpMode{
     private DcMotor frontLeft;
     private DcMotor backRight;
     private DcMotor backLeft;
+    private Servo dropServo;
+
+    double servoPos = 0.85;
 
     public void turnForTime(float time, double turnPower){
 
@@ -139,11 +142,11 @@ public class AutoDropGoatMode extends LinearOpMode{
         int stage = 0;
         double checkTime;
         double checkTimeEnd = 0;
-        double servoPos = 0.9;
+        servoPos = 0.85;
 
         DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
         DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
-        Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
+
 
         while (stage < 7) {
             if (stage == 0) {
@@ -213,12 +216,12 @@ public class AutoDropGoatMode extends LinearOpMode{
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                time = 620;
+                time = 640;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
-                servoPos = 0.97;
+                servoPos = 0.85;
                 sleep(20);
                 stage = 5;
             }
@@ -257,6 +260,11 @@ public class AutoDropGoatMode extends LinearOpMode{
     @Override
     public void runOpMode() {
 
+        dropServo = hardwareMap.get(Servo.class, "dropServo");
+
+        servoPos = 0.85;
+
+        dropServo.setPosition(servoPos);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -285,7 +293,7 @@ public class AutoDropGoatMode extends LinearOpMode{
 
         turnForTime(1500, -1);
 
-        moveForTime(340, 0, 1);
+        moveForTime(420, 0, 1);
 
         moveForTime(4500, 270, 5);
 
