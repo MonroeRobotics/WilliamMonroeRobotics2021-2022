@@ -31,6 +31,8 @@ public class DriveProgram extends LinearOpMode{
         boolean isPrep = true;
         boolean servoBool = true;
         boolean servoRel = true;
+        boolean servoBlockBool = true;
+        boolean servoBlockRel = true;
 
 
         //region Set Up Variables for Timer
@@ -39,6 +41,7 @@ public class DriveProgram extends LinearOpMode{
         long checkTime;
         long checkTimeEnd = 0;
         double servoPos = 0.98;
+        double servoBlockPos = 0.88;
         //endregion
         //endregion
 
@@ -51,6 +54,7 @@ public class DriveProgram extends LinearOpMode{
         DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
         DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
+        Servo blockServo = hardwareMap.get(Servo.class, "blockServo");
         DcMotor wheelMotor = hardwareMap.get(DcMotor.class, "wheelMotor");
         DistanceSensor rangeSen = hardwareMap.get(DistanceSensor.class, "rangeSen");
 
@@ -129,6 +133,21 @@ public class DriveProgram extends LinearOpMode{
             }
             if (this.gamepad2.left_trigger < 0.2 && servoRel == false) {
                 servoRel = true;
+            }
+
+            if(servoBlockBool && this.gamepad2.right_trigger > 0.5 && servoBlockRel){
+                servoBlockPos = .88;
+                servoBlockBool = false;
+                servoBlockRel = false;
+            }
+
+            else if(!servoBlockBool && this.gamepad2.right_trigger > 0.5 && servoBlockRel){
+                servoBlockPos = .30;
+                servoBlockBool = true;
+                servoBlockRel = false;
+            }
+            if (this.gamepad2.right_trigger < 0.2 && servoBlockRel == false) {
+                servoBlockRel = true;
             }
 
             if (this.gamepad1.right_trigger > 0.5){
@@ -230,19 +249,20 @@ public class DriveProgram extends LinearOpMode{
                 time = 700;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
+                servoBlockPos = .88;
                 stage = 1;
             }
 
             //while timer is active and stage 1 is active move arm up
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 1) {
                 lineMotor.setPower(1);
-                lineMotor2.setPower(-0.5);
+                lineMotor2.setPower(-0.6);
                 telemetry.addData("Running", "True");
             }
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 1){
-                time = 1500;
+                time = 2800;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -254,7 +274,7 @@ public class DriveProgram extends LinearOpMode{
             //while timer is active and stage 2 is active move arm up
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 2) {
                 lineMotor.setPower(1);
-                lineMotor2.setPower(-0.5);
+                lineMotor2.setPower(-0.6);
                 telemetry.addData("Running", "True");
             }
 
@@ -267,6 +287,17 @@ public class DriveProgram extends LinearOpMode{
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
                 servoPos = 0.0;
+                stage = 12;
+            }
+
+            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 12 && this.gamepad2.b){
+                time = 2000;
+                checkTime =  System.currentTimeMillis();
+                checkTimeEnd = checkTime + time;
+                lineMotor.setPower(0);
+                lineMotor2.setPower(0);
+                servoPos = 0.0;
+                servoBlockPos = 0.4;
                 stage = 3;
             }
 
@@ -284,26 +315,27 @@ public class DriveProgram extends LinearOpMode{
 
             //while timer is active and stage 4 is active move arm down
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                lineMotor.setPower(-0.9);
+                lineMotor.setPower(-0.6);
                 lineMotor2.setPower(1);
                 telemetry.addData("Running", "True");
             }
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 4){
-                time = 640;
+                time = 750;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
-                servoPos = 0.95;
+                servoPos = 0.98;
+                servoBlockPos = .88;
                 sleep(20);
                 stage = 5;
             }
 
             //while timer is active and stage 5 is active move arm down
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 5) {
-                lineMotor.setPower(-0.9);
+                lineMotor.setPower(-0.6);
                 lineMotor2.setPower(1);
                 telemetry.addData("Running", "True");
             }
@@ -312,26 +344,13 @@ public class DriveProgram extends LinearOpMode{
                 time = 30;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
-                stage = 6;
-                telemetry.addData("Running", "True");
-            }
-
-            if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 6) {
-                lineMotor.setPower(1);
-                telemetry.addData("Running", "True");
-            }
-
-            //when timer is up and stage 5 is active stop motors and reset stage
-            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 6){
                 stage = 0;
-                lineMotor.setPower(0);
-                lineMotor2.setPower(0);
-                telemetry.addData("Running", "False");
+                telemetry.addData("Running", "True");
             }
-
             //endregion
 
             dropServo.setPosition(servoPos);
+            blockServo.setPosition(servoBlockPos);
 
             //region Manual Motor And Arm Movement
 
@@ -385,7 +404,7 @@ public class DriveProgram extends LinearOpMode{
             backLeft.setPower(bLeft);
             frontRight.setPower(fRight);
             backRight.setPower(bRight);
-            frontLeft.setPower(fLeft);
+            frontLeft.setPower(-fLeft);
             //endregion
 
             //region Telemetry Data
