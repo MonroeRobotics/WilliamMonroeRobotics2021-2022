@@ -301,7 +301,7 @@ public class AutoDropRev extends LinearOpMode{
 
         turnForTime(1400, -1);
 
-        moveForTime(1250, 270, 1);
+        moveForTime(1025, 270, 1);
 
         moveForTime(500, 180, 1);
 

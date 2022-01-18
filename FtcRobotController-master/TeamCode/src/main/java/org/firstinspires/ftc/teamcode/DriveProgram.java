@@ -38,7 +38,7 @@ public class DriveProgram extends LinearOpMode{
         long time;
         long checkTime;
         long checkTimeEnd = 0;
-        double servoPos = 0.95;
+        double servoPos = 0.98;
         //endregion
         //endregion
 
@@ -53,10 +53,18 @@ public class DriveProgram extends LinearOpMode{
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
         DcMotor wheelMotor = hardwareMap.get(DcMotor.class, "wheelMotor");
         DistanceSensor rangeSen = hardwareMap.get(DistanceSensor.class, "rangeSen");
-        //endregion
 
         lineMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lineMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lineMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lineMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //endregion
+
 
 
         telemetry.addData("Status", "Initialized");
@@ -115,7 +123,7 @@ public class DriveProgram extends LinearOpMode{
             }
 
             else if(!servoBool && this.gamepad2.left_trigger > 0.5 && servoRel){
-                servoPos = .95;
+                servoPos = .98;
                 servoBool = true;
                 servoRel = false;
             }
@@ -123,8 +131,14 @@ public class DriveProgram extends LinearOpMode{
                 servoRel = true;
             }
 
-            if (this.gamepad2.right_trigger > 0.5){
+            if (this.gamepad1.right_trigger > 0.5){
                 wheelMotor.setPower(-1.0);
+            }
+            else {
+                wheelMotor.setPower(0);
+            }
+            if (this.gamepad1.left_trigger > 0.5){
+                wheelMotor.setPower(1.0);
             }
             else {
                 wheelMotor.setPower(0);
@@ -174,7 +188,7 @@ public class DriveProgram extends LinearOpMode{
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
-                servoPos = 0.95;
+                servoPos = 0.98;
                 stage = 9;
                 isPrep = true;
             }
@@ -228,7 +242,7 @@ public class DriveProgram extends LinearOpMode{
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 1){
-                time = 3500;
+                time = 1500;
                 checkTime =  System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -350,12 +364,12 @@ public class DriveProgram extends LinearOpMode{
             //region Arm Movement
             if (this.gamepad2.dpad_up){
                 lineMotor.setPower(1.0);
-                lineMotor2.setPower(-0.5);
+                lineMotor2.setPower(-1.0);
                 telemetry.addData("Running", "True");
 
             }
             if (this.gamepad2.dpad_down){
-                lineMotor.setPower(-0.9);
+                lineMotor.setPower(-1.0);
                 lineMotor2.setPower(1.0);
                 telemetry.addData("Running", "True");
 
