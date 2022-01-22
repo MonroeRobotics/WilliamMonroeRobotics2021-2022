@@ -256,7 +256,7 @@ public class DriveProgram extends LinearOpMode{
             //while timer is active and stage 1 is active move arm up
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 1) {
                 lineMotor.setPower(1);
-                lineMotor2.setPower(-0.6);
+                lineMotor2.setPower(-0.45);
                 telemetry.addData("Running", "True");
             }
 
@@ -274,7 +274,7 @@ public class DriveProgram extends LinearOpMode{
             //while timer is active and stage 2 is active move arm up
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 2) {
                 lineMotor.setPower(1);
-                lineMotor2.setPower(-0.6);
+                lineMotor2.setPower(-0.45);
                 telemetry.addData("Running", "True");
             }
 
