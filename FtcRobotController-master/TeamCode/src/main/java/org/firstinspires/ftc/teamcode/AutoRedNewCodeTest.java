@@ -35,22 +35,24 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "AutoRed", group = "Red")
+@Autonomous(name = "AutoRedTest", group = "Red")
 
-public class AutoDropTest2 extends LinearOpMode{
+public class AutoRedNewCodeTest extends LinearOpMode{
 
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backRight;
     private DcMotor backLeft;
-    private Servo dropServo;
-    private Servo blockServo;
 
-    double servoPos = 0.98;
+    double servoPos = 0.85;
+
+    Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
+    Servo blockServo = hardwareMap.get(Servo.class, "blockServo");
 
     double servoBlockPos = 0.88;
 
     public void turnForTime(float time, double turnPower){
+
 
         double checkTime =  System.currentTimeMillis();
         double checkTimeEnd = checkTime + time;
@@ -140,7 +142,7 @@ public class AutoDropTest2 extends LinearOpMode{
         wheelMotor.setPower(0);
     }
 
-    public void dropArm(){
+    public void dropArm() {
         int stage = 0;
         double checkTime;
         double checkTimeEnd = 0;
@@ -148,7 +150,9 @@ public class AutoDropTest2 extends LinearOpMode{
 
         DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
         DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
-        while (stage != 5) {
+
+
+        while (stage < 7) {
             if (stage == 0) {
                 lineMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 lineMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -196,7 +200,7 @@ public class AutoDropTest2 extends LinearOpMode{
                 stage = 12;
             }
 
-            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 12) {
+            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 12 && this.gamepad2.b) {
                 time = 2000;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
@@ -253,24 +257,21 @@ public class AutoDropTest2 extends LinearOpMode{
                 stage = 0;
                 telemetry.addData("Running", "True");
             }
-            //endregion
-
             dropServo.setPosition(servoPos);
             blockServo.setPosition(servoBlockPos);
+            //endregion
         }
     }
 
+
     @Override
-    public void runOpMode() {
+    public void runOpMode(){
 
         dropServo = hardwareMap.get(Servo.class, "dropServo");
 
-        blockServo = hardwareMap.get(Servo.class, "blockServo");
-
-        servoPos = 0.98;
+        servoPos = 0.85;
 
         dropServo.setPosition(servoPos);
-        blockServo.setPosition(servoBlockPos);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -279,19 +280,19 @@ public class AutoDropTest2 extends LinearOpMode{
 
         // run until the end of the match (driver presses STOP)
 
-        moveForTime(650, 270, 1);
+        moveForTime(1000, 270, 1);
 
         sleep(1000);
 
-        moveForTime(1400, 180, 0.6);
+        moveForTime(1400, 180, 1);
 
         dropArm();
 
-        moveForTime(2700, 0, 0.6);
+        moveForTime(2700, 0, 1);
 
-        turnForTime(650, 0.6);
+        turnForTime(650, 1);
 
-        moveForTime(1300, 0, 0.6);
+        moveForTime(1300, 0, 1);
 
         wheelForTime(3500, -1);
 
@@ -306,6 +307,7 @@ public class AutoDropTest2 extends LinearOpMode{
         moveForTime(400, 0, 1);
 
         turnForTime(50, -1);
+
 
     }
 }
