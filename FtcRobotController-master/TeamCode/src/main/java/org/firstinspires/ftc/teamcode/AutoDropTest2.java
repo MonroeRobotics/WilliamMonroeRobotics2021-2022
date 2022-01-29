@@ -60,11 +60,16 @@ public class AutoDropTest2 extends LinearOpMode{
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
             backLeft.setPower(turnPower);
             frontRight.setPower(turnPower);
             backRight.setPower(turnPower);
-            frontLeft.setPower(turnPower);
+            frontLeft.setPower(-turnPower);
         }
 
         backLeft.setPower(0);
@@ -89,6 +94,11 @@ public class AutoDropTest2 extends LinearOpMode{
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
 
@@ -148,11 +158,17 @@ public class AutoDropTest2 extends LinearOpMode{
 
         DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
         DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
-        while (stage != 5) {
+        DcMotor intakeMotor  = hardwareMap.get(DcMotor.class, "intakeMotor");
+
+
+        lineMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        lineMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        while (stage != 22) {
             if (stage == 0) {
                 lineMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 lineMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                time = 700;
+                time = 575;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 servoBlockPos = .88;
@@ -162,9 +178,18 @@ public class AutoDropTest2 extends LinearOpMode{
             //while timer is active and stage 1 is active move arm up
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 1) {
                 lineMotor.setPower(1);
-                lineMotor2.setPower(-0.45);
+                lineMotor2.setPower(-0.55);
                 telemetry.addData("Running", "True");
             }
+
+            if ((checkTimeEnd - 350) > System.currentTimeMillis() && opModeIsActive() && stage == 1) {
+                intakeMotor.setPower(-0.5);
+                telemetry.addData("Running", "True");
+            }
+            else {
+                intakeMotor.setPower(0);
+            }
+
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 1) {
@@ -192,24 +217,24 @@ public class AutoDropTest2 extends LinearOpMode{
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
-                servoPos = 0.0;
+                servoPos = 0.10;
                 stage = 12;
             }
 
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 12) {
-                time = 2000;
+                time = 500;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
-                servoPos = 0.0;
+                servoPos = 0.10;
                 servoBlockPos = 0.4;
                 stage = 3;
             }
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 3) {
-                time = 2800;
+                time = 2600;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -221,14 +246,14 @@ public class AutoDropTest2 extends LinearOpMode{
 
             //while timer is active and stage 4 is active move arm down
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                lineMotor.setPower(-0.6);
+                lineMotor.setPower(-0.55);
                 lineMotor2.setPower(1);
                 telemetry.addData("Running", "True");
             }
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                time = 750;
+                time = 650;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -241,7 +266,7 @@ public class AutoDropTest2 extends LinearOpMode{
 
             //while timer is active and stage 5 is active move arm down
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 5) {
-                lineMotor.setPower(-0.6);
+                lineMotor.setPower(-0.55);
                 lineMotor2.setPower(1);
                 telemetry.addData("Running", "True");
             }
@@ -250,7 +275,9 @@ public class AutoDropTest2 extends LinearOpMode{
                 time = 30;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
-                stage = 0;
+                lineMotor.setPower(0);
+                lineMotor2.setPower(0);
+                stage = 22;
                 telemetry.addData("Running", "True");
             }
             //endregion
@@ -279,33 +306,33 @@ public class AutoDropTest2 extends LinearOpMode{
 
         // run until the end of the match (driver presses STOP)
 
-        moveForTime(650, 270, 1);
+        moveForTime(600, 270, 1);
 
-        sleep(1000);
+        sleep(400);
 
-        moveForTime(1400, 180, 0.6);
+        moveForTime(1600, 180, 0.6);
 
         dropArm();
 
-        moveForTime(2700, 0, 0.6);
+        moveForTime(2750, 0, 0.6);
 
-        turnForTime(650, 0.6);
+        turnForTime(460, 0.6);
 
-        moveForTime(1300, 0, 0.6);
+        moveForTime(1325, 0, 0.6);
 
         wheelForTime(3500, -1);
 
-        moveForTime(1100, 180, 1);
+        moveForTime(500, 180, 1);
 
-        turnForTime(600, -1);
+        turnForTime(300, -1);
 
-        moveForTime(420, 270, 1);
+        moveForTime(475, 270, 1);
 
-        sleep(1000);
+        sleep(250);
 
-        moveForTime(400, 0, 1);
+        moveForTime(700, 0, 1);
 
-        turnForTime(50, -1);
+        turnForTime(50, 1);
 
     }
 }

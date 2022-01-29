@@ -44,28 +44,36 @@ public class AutoDropRev extends LinearOpMode{
     private DcMotor frontLeft;
     private DcMotor backRight;
     private DcMotor backLeft;
-
+    private DcMotor intakeMotor;
     private Servo dropServo;
+    private Servo blockServo;
 
-    double servoPos = 0.85;
+    double servoPos = 0.98;
 
+    double servoBlockPos = 0.88;
 
     public void turnForTime(float time, double turnPower){
 
-
         double checkTime =  System.currentTimeMillis();
         double checkTimeEnd = checkTime + time;
+
+
 
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
             backLeft.setPower(turnPower);
             frontRight.setPower(turnPower);
             backRight.setPower(turnPower);
-            frontLeft.setPower(turnPower);
+            frontLeft.setPower(-turnPower);
         }
 
         backLeft.setPower(0);
@@ -90,6 +98,12 @@ public class AutoDropRev extends LinearOpMode{
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
 
@@ -116,7 +130,7 @@ public class AutoDropRev extends LinearOpMode{
             backLeft.setPower(bLeft);
             frontRight.setPower(fRight);
             backRight.setPower(bRight);
-            frontLeft.setPower(fLeft);
+            frontLeft.setPower(-fLeft);
 
 
         }
@@ -150,26 +164,30 @@ public class AutoDropRev extends LinearOpMode{
         DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
         DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
 
-        while (stage < 7) {
+        lineMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lineMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        while (stage != 5) {
             if (stage == 0) {
                 lineMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 lineMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 time = 700;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
+                servoBlockPos = .88;
                 stage = 1;
             }
 
             //while timer is active and stage 1 is active move arm up
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 1) {
                 lineMotor.setPower(1);
-                lineMotor2.setPower(-0.5);
+                lineMotor2.setPower(-0.45);
                 telemetry.addData("Running", "True");
             }
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 1) {
-                time = 3500;
+                time = 2800;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -181,7 +199,7 @@ public class AutoDropRev extends LinearOpMode{
             //while timer is active and stage 2 is active move arm up
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 2) {
                 lineMotor.setPower(1);
-                lineMotor2.setPower(-0.5);
+                lineMotor2.setPower(-0.45);
                 telemetry.addData("Running", "True");
             }
 
@@ -194,6 +212,17 @@ public class AutoDropRev extends LinearOpMode{
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
                 servoPos = 0.0;
+                stage = 12;
+            }
+
+            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 12) {
+                time = 2000;
+                checkTime = System.currentTimeMillis();
+                checkTimeEnd = checkTime + time;
+                lineMotor.setPower(0);
+                lineMotor2.setPower(0);
+                servoPos = 0.0;
+                servoBlockPos = 0.4;
                 stage = 3;
             }
 
@@ -211,26 +240,27 @@ public class AutoDropRev extends LinearOpMode{
 
             //while timer is active and stage 4 is active move arm down
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                lineMotor.setPower(-0.9);
+                lineMotor.setPower(-0.6);
                 lineMotor2.setPower(1);
                 telemetry.addData("Running", "True");
             }
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                time = 640;
+                time = 750;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
                 lineMotor2.setPower(0);
-                servoPos = 0.85;
+                servoPos = 0.98;
+                servoBlockPos = .88;
                 sleep(20);
                 stage = 5;
             }
 
             //while timer is active and stage 5 is active move arm down
             if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 5) {
-                lineMotor.setPower(-0.9);
+                lineMotor.setPower(-0.6);
                 lineMotor2.setPower(1);
                 telemetry.addData("Running", "True");
             }
@@ -239,23 +269,13 @@ public class AutoDropRev extends LinearOpMode{
                 time = 30;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
-                stage = 6;
+                stage = 0;
                 telemetry.addData("Running", "True");
             }
+            //endregion
 
-            if (checkTimeEnd > System.currentTimeMillis() && opModeIsActive() && stage == 6) {
-                lineMotor.setPower(1);
-                telemetry.addData("Running", "True");
-            }
-
-            //when timer is up and stage 5 is active stop motors and reset stage
-            if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 6) {
-                stage = 7;
-                lineMotor.setPower(0);
-                lineMotor2.setPower(0);
-                telemetry.addData("Running", "False");
-            }
             dropServo.setPosition(servoPos);
+            blockServo.setPosition(servoBlockPos);
         }
     }
 
@@ -264,7 +284,7 @@ public class AutoDropRev extends LinearOpMode{
 
         dropServo = hardwareMap.get(Servo.class, "dropServo");
 
-
+        intakeMotor  = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         servoPos = 0.85;
 
@@ -283,27 +303,27 @@ public class AutoDropRev extends LinearOpMode{
 
         sleep(1000);
 
-        moveForTime(1600, 0, 1);
+        moveForTime(1600, 0, 0.6);
 
         dropArm();
 
         moveForTime(419, 90, 1);
 
-        moveForTime(2400,180, 1);
+        moveForTime(2400,180, 0.6);
 
         turnForTime(1500, 1);
 
-        moveForTime(1198,0, 1);
+        moveForTime(1198,0, 0.6);
 
         wheelForTime(3500, 1);
 
-        moveForTime(400,180, 1);
+        moveForTime(400,180, 0.6);
 
         turnForTime(1400, -1);
 
         moveForTime(1025, 270, 1);
 
-        moveForTime(500, 180, 1);
+        moveForTime(500, 180, 0.6);
 
     }
 }
