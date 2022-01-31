@@ -40,10 +40,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class AutoDropRev extends LinearOpMode{
 
-    private DcMotor frontRight;
-    private DcMotor frontLeft;
-    private DcMotor backRight;
-    private DcMotor backLeft;
+    private DcMotorEx frontRight;
+    private DcMotorEx frontLeft;
+    private DcMotorEx backRight;
+    private DcMotorEx backLeft;
     private Servo dropServo;
     private Servo blockServo;
 
@@ -55,22 +55,36 @@ public class AutoDropRev extends LinearOpMode{
 
         double checkTime =  System.currentTimeMillis();
         double checkTimeEnd = checkTime + time;
+        double motorSpeed = 400;
 
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        sleep(10);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
-            backLeft.setPower(turnPower);
-            frontRight.setPower(turnPower);
-            backRight.setPower(turnPower);
-            frontLeft.setPower(-turnPower);
+            backLeft.setVelocity(motorSpeed * turnPower);
+            frontRight.setVelocity(motorSpeed * turnPower);
+            backRight.setVelocity(motorSpeed * turnPower);
+            frontLeft.setVelocity(motorSpeed * -turnPower);
         }
 
         backLeft.setPower(0);
@@ -85,21 +99,34 @@ public class AutoDropRev extends LinearOpMode{
         double bRight;
         double bLeft;
         double fLeft;
+        double motorSpeed = 400;
 
         double direction = deg * (Math.PI / 180);
 
         double checkTime =  System.currentTimeMillis();
         double checkTimeEnd = checkTime + time;
 
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        sleep(10);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
 
@@ -123,10 +150,10 @@ public class AutoDropRev extends LinearOpMode{
                 bRight = (bRight / Math.abs(fLeft));
             }
 
-            backLeft.setPower(bLeft);
-            frontRight.setPower(fRight);
-            backRight.setPower(bRight);
-            frontLeft.setPower(-fLeft);
+            backLeft.setVelocity(motorSpeed * bLeft);
+            frontRight.setVelocity(motorSpeed * fRight);
+            backRight.setVelocity(motorSpeed * bRight);
+            frontLeft.setVelocity(motorSpeed * (-fLeft));
 
 
         }
@@ -157,12 +184,11 @@ public class AutoDropRev extends LinearOpMode{
         double checkTimeEnd = 0;
         servoPos = 0.85;
 
-        DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
-        DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
+        DcMotor lineMotor = hardwareMap.get(DcMotor.class, "leverMotor");
+        DcMotor lineMotor2 = hardwareMap.get(DcMotor.class, "backMotor");
         DcMotor intakeMotor  = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-
-        lineMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        lineMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lineMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         while (stage != 22) {

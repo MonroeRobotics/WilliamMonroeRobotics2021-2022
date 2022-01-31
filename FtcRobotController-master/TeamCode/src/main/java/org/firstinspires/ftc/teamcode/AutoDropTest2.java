@@ -33,16 +33,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "AutoRed", group = "Red")
 
 public class AutoDropTest2 extends LinearOpMode{
 
-    private DcMotor frontRight;
-    private DcMotor frontLeft;
-    private DcMotor backRight;
-    private DcMotor backLeft;
+    private DcMotorEx frontRight;
+    private DcMotorEx frontLeft;
+    private DcMotorEx backRight;
+    private DcMotorEx backLeft;
     private Servo dropServo;
     private Servo blockServo;
 
@@ -54,22 +55,49 @@ public class AutoDropTest2 extends LinearOpMode{
 
         double checkTime =  System.currentTimeMillis();
         double checkTimeEnd = checkTime + time;
+        double motorSpeed = 2500;
 
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        sleep(10);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        if (turnPower > 0){
+            backRight.setDirection(DcMotor.Direction.FORWARD);
+            backLeft.setDirection(DcMotor.Direction.FORWARD);
+            frontRight.setDirection(DcMotor.Direction.FORWARD);
+            frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        }
+        else{
+            backRight.setDirection(DcMotor.Direction.REVERSE);
+            backLeft.setDirection(DcMotor.Direction.REVERSE);
+            frontRight.setDirection(DcMotor.Direction.REVERSE);
+            frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        }
+
+
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
-            backLeft.setPower(turnPower);
-            frontRight.setPower(turnPower);
-            backRight.setPower(turnPower);
-            frontLeft.setPower(-turnPower);
+            backLeft.setVelocity(Math.abs(motorSpeed * turnPower));
+            frontRight.setVelocity(Math.abs(motorSpeed * turnPower));
+            backRight.setVelocity(Math.abs(motorSpeed * turnPower));
+            frontLeft.setVelocity(Math.abs(motorSpeed * turnPower));
         }
 
         backLeft.setPower(0);
@@ -84,21 +112,34 @@ public class AutoDropTest2 extends LinearOpMode{
         double bRight;
         double bLeft;
         double fLeft;
+        double motorSpeed = 2300;
 
         double direction = deg * (Math.PI / 180);
 
         double checkTime =  System.currentTimeMillis();
         double checkTimeEnd = checkTime + time;
 
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        sleep(10);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
 
@@ -108,24 +149,36 @@ public class AutoDropTest2 extends LinearOpMode{
             bRight = (Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude);
             fLeft = (- Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude);
 
-            if (fRight > 1 || fRight < -1){
-                fLeft = (fLeft / Math.abs(fRight));
-                fRight = (fRight / Math.abs(fRight));
-                bRight = (bRight / Math.abs(fRight));
-                bLeft = (bLeft / Math.abs(fRight));
+
+            if (bLeft > 0){
+                backLeft.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                backLeft.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (bRight > 0){
+                backRight.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                backRight.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (fRight > 0){
+                frontRight.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                frontRight.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (fLeft > 0){
+                frontLeft.setDirection(DcMotor.Direction.REVERSE);
+            }
+            else {
+                frontLeft.setDirection(DcMotor.Direction.FORWARD);
             }
 
-            if (fLeft > 1 || fLeft < -1){
-                fLeft = (fLeft / Math.abs(fLeft));
-                fRight = (fRight / Math.abs(fLeft));
-                bLeft = (bLeft / Math.abs(fLeft));
-                bRight = (bRight / Math.abs(fLeft));
-            }
-
-            backLeft.setPower(bLeft);
-            frontRight.setPower(fRight);
-            backRight.setPower(bRight);
-            frontLeft.setPower(-fLeft);
+            backLeft.setVelocity(Math.abs(motorSpeed * bLeft));
+            frontRight.setVelocity(Math.abs(motorSpeed * fRight));
+            backRight.setVelocity(Math.abs(motorSpeed * bRight));
+            frontLeft.setVelocity(Math.abs(motorSpeed * (fLeft)));
 
 
         }
@@ -306,7 +359,8 @@ public class AutoDropTest2 extends LinearOpMode{
 
         // run until the end of the match (driver presses STOP)
 
-        moveForTime(600, 270, 1);
+
+        moveForTime(950, 270, 1);
 
         sleep(400);
 
@@ -314,25 +368,24 @@ public class AutoDropTest2 extends LinearOpMode{
 
         dropArm();
 
-        moveForTime(2750, 0, 0.6);
+        moveForTime(2300, 0, 0.6);
 
-        turnForTime(460, 0.6);
+        turnForTime(400, 1);
 
-        moveForTime(1325, 0, 0.6);
+        moveForTime(1500, 0, 0.6);
 
         wheelForTime(3500, -1);
 
         moveForTime(500, 180, 1);
 
-        turnForTime(300, -1);
+        turnForTime(800, -1);
 
-        moveForTime(475, 270, 1);
+        moveForTime(700, 270, 1);
 
         sleep(250);
 
-        moveForTime(700, 0, 1);
+        moveForTime(300, 0, 1);
 
         turnForTime(50, 1);
-
     }
 }

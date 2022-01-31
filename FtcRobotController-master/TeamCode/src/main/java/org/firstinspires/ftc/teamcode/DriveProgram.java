@@ -17,7 +17,8 @@ public class DriveProgram extends LinearOpMode{
 
     public void runOpMode(){
         //region Variables Setup
-        double motorPower = 1;
+        double motorSpeed = 2000;
+        boolean dP = false;
         double leftstickX;
         double leftstickY;
         double direction;
@@ -46,10 +47,10 @@ public class DriveProgram extends LinearOpMode{
         //endregion
 
         //region Hardware Map
-        DcMotor backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        DcMotor backRight = hardwareMap.get(DcMotor.class, "backRight");
-        DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        DcMotorEx backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        DcMotorEx backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        DcMotorEx frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        DcMotorEx frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         DcMotor intakeMotor  = hardwareMap.get(DcMotor.class, "intakeMotor");
         DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
         DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
@@ -67,18 +68,48 @@ public class DriveProgram extends LinearOpMode{
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //endregion
-
-
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
 
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         while (opModeIsActive()){
 
+
             double distance = rangeSen.getDistance(DistanceUnit.INCH);
+
+
+
+            //region Motor Speed adjustment
+            if (this.gamepad1.dpad_up && motorSpeed < 10000){
+                if (!dP) {
+                    motorSpeed = motorSpeed + 1000;
+                    dP = true;
+                }
+            }
+            else if (this.gamepad1.dpad_down && motorSpeed > 1000){
+                if(dP == false) {
+                    motorSpeed = motorSpeed - 1000;
+                    dP = true;
+                }
+            }
+            else {
+                dP = false;
+            }
+
+            //endregion
 
             leftstickX = this.gamepad1.left_stick_x;
             leftstickY = -this.gamepad1.left_stick_y;
@@ -88,11 +119,12 @@ public class DriveProgram extends LinearOpMode{
             direction = Math.atan2(leftstickY, leftstickX);
             magnitude = Math.sqrt(Math.pow(leftstickX, 2) + Math.pow(leftstickY, 2)) * 1.5;
             
-            fRight = (Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude + turn);
-            bLeft = (-Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude + turn);
-            bRight = (Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude + turn);
-            fLeft = (-Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude + turn);
-            
+            fRight = (motorSpeed * (Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude + turn));
+            bLeft = (motorSpeed * (-Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude + turn));
+            bRight = (motorSpeed * (Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude + turn));
+            fLeft = (motorSpeed * (-Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude + turn));
+
+            /*
             if (fRight > 1 || fRight < -1){
                 fLeft = (fLeft / Math.abs(fRight));
                 fRight = (fRight / Math.abs(fRight));
@@ -106,6 +138,7 @@ public class DriveProgram extends LinearOpMode{
                 bLeft = (bLeft / Math.abs(fLeft));
                 bRight = (bRight / Math.abs(fLeft));
             }
+            */
             //endregion
 
 
@@ -392,13 +425,40 @@ public class DriveProgram extends LinearOpMode{
             //endregion
 
             //region Setting Motors
-            backLeft.setPower(bLeft);
-            frontRight.setPower(fRight);
-            backRight.setPower(bRight);
-            frontLeft.setPower(-fLeft);
+            if (bLeft > 0){
+                backLeft.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                backLeft.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (bRight > 0){
+                backRight.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                backRight.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (fRight > 0){
+                frontRight.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                frontRight.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (fLeft > 0){
+                frontLeft.setDirection(DcMotor.Direction.REVERSE);
+            }
+            else {
+                frontLeft.setDirection(DcMotor.Direction.FORWARD);
+            }
+
+
+            backLeft.setVelocity(Math.abs(bLeft));
+            frontRight.setVelocity(Math.abs(fRight));
+            backRight.setVelocity(Math.abs(bRight));
+            frontLeft.setVelocity(Math.abs(fLeft));
             //endregion
 
             //region Telemetry Data
+            telemetry.addData("motorSpeed", motorSpeed);
             telemetry.addData("Status", "Initialized");
             telemetry.addData("Arm Motor", lineMotor.getCurrentPosition());
             telemetry.addData("Distance:", distance);
