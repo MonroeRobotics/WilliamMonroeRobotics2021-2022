@@ -143,7 +143,6 @@ public class AutoDropTest2 extends LinearOpMode{
 
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
 
-
             fRight = (Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude);
             bLeft = (-Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude);
             bRight = (Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude);
@@ -179,8 +178,6 @@ public class AutoDropTest2 extends LinearOpMode{
             frontRight.setVelocity(Math.abs(motorSpeed * fRight));
             backRight.setVelocity(Math.abs(motorSpeed * bRight));
             frontLeft.setVelocity(Math.abs(motorSpeed * (fLeft)));
-
-
         }
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -360,32 +357,30 @@ public class AutoDropTest2 extends LinearOpMode{
         // run until the end of the match (driver presses STOP)
 
 
-        moveForTime(950, 270, 1);
+        moveForTime(900, 270, 1);
 
         sleep(400);
 
-        moveForTime(1600, 180, 0.6);
+        moveForTime(2000, 180, 0.4);
 
         dropArm();
 
-        moveForTime(2300, 0, 0.6);
+        moveForTime(2800, 0, 0.4);
 
         turnForTime(400, 1);
 
-        moveForTime(1500, 0, 0.6);
+        moveForTime(2400, 0, 0.4);
 
         wheelForTime(3500, -1);
 
-        moveForTime(500, 180, 1);
+        moveForTime(1000, 180, 0.4);
 
-        turnForTime(800, -1);
+        turnForTime(500, -1);
 
-        moveForTime(700, 270, 1);
+        moveForTime(1200, 270, 1);
 
         sleep(250);
 
-        moveForTime(300, 0, 1);
-
-        turnForTime(50, 1);
+        moveForTime(500, 0, 1);
     }
 }
