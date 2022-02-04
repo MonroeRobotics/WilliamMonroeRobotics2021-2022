@@ -303,7 +303,7 @@ public class AutoDropTest2 extends LinearOpMode{
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                time = 650;
+                time = 750;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -357,30 +357,30 @@ public class AutoDropTest2 extends LinearOpMode{
         // run until the end of the match (driver presses STOP)
 
 
-        moveForTime(900, 270, 1);
+        moveForTime(1600, 270, .5);
 
-        sleep(400);
+        sleep(100);
 
-        moveForTime(2000, 180, 0.4);
+        turnForTime(600, -.6);
+
+        moveForTime(900, 270, .5);
+
+        sleep (300);
 
         dropArm();
 
-        moveForTime(2800, 0, 0.4);
+        moveForTime(900, 90, .5);
 
-        turnForTime(400, 1);
+        turnForTime(1060, 1);
 
-        moveForTime(2400, 0, 0.4);
+        moveForTime(1600, 270, 0.6);
 
         wheelForTime(3500, -1);
 
-        moveForTime(1000, 180, 0.4);
+        moveForTime(200, 90, 1);
 
-        turnForTime(500, -1);
+        turnForTime(1100, -.6);
 
-        moveForTime(1200, 270, 1);
-
-        sleep(250);
-
-        moveForTime(500, 0, 1);
+        moveForTime(600, 270, 1);
     }
 }
