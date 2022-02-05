@@ -55,7 +55,7 @@ public class AutoDropRev extends LinearOpMode{
 
         double checkTime =  System.currentTimeMillis();
         double checkTimeEnd = checkTime + time;
-        double motorSpeed = 400;
+        double motorSpeed = 2500;
 
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
@@ -79,12 +79,25 @@ public class AutoDropRev extends LinearOpMode{
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        if (turnPower > 0){
+            backRight.setDirection(DcMotor.Direction.FORWARD);
+            backLeft.setDirection(DcMotor.Direction.FORWARD);
+            frontRight.setDirection(DcMotor.Direction.FORWARD);
+            frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        }
+        else{
+            backRight.setDirection(DcMotor.Direction.REVERSE);
+            backLeft.setDirection(DcMotor.Direction.REVERSE);
+            frontRight.setDirection(DcMotor.Direction.REVERSE);
+            frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        }
+
 
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
-            backLeft.setVelocity(motorSpeed * turnPower);
-            frontRight.setVelocity(motorSpeed * turnPower);
-            backRight.setVelocity(motorSpeed * turnPower);
-            frontLeft.setVelocity(motorSpeed * -turnPower);
+            backLeft.setVelocity(Math.abs(motorSpeed * turnPower));
+            frontRight.setVelocity(Math.abs(motorSpeed * turnPower));
+            backRight.setVelocity(Math.abs(motorSpeed * turnPower));
+            frontLeft.setVelocity(Math.abs(motorSpeed * turnPower));
         }
 
         backLeft.setPower(0);
@@ -99,7 +112,7 @@ public class AutoDropRev extends LinearOpMode{
         double bRight;
         double bLeft;
         double fLeft;
-        double motorSpeed = 400;
+        double motorSpeed = 2300;
 
         double direction = deg * (Math.PI / 180);
 
@@ -130,32 +143,41 @@ public class AutoDropRev extends LinearOpMode{
 
         while (checkTimeEnd > System.currentTimeMillis() && opModeIsActive()) {
 
-
             fRight = (Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude);
             bLeft = (-Math.sin(direction - 1.0/4.0 * Math.PI) * magnitude);
             bRight = (Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude);
             fLeft = (- Math.sin(direction + 1.0/4.0 * Math.PI) * magnitude);
 
-            if (fRight > 1 || fRight < -1){
-                fLeft = (fLeft / Math.abs(fRight));
-                fRight = (fRight / Math.abs(fRight));
-                bRight = (bRight / Math.abs(fRight));
-                bLeft = (bLeft / Math.abs(fRight));
+
+            if (bLeft > 0){
+                backLeft.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                backLeft.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (bRight > 0){
+                backRight.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                backRight.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (fRight > 0){
+                frontRight.setDirection(DcMotor.Direction.FORWARD);
+            }
+            else {
+                frontRight.setDirection(DcMotor.Direction.REVERSE);
+            }
+            if (fLeft > 0){
+                frontLeft.setDirection(DcMotor.Direction.REVERSE);
+            }
+            else {
+                frontLeft.setDirection(DcMotor.Direction.FORWARD);
             }
 
-            if (fLeft > 1 || fLeft < -1){
-                fLeft = (fLeft / Math.abs(fLeft));
-                fRight = (fRight / Math.abs(fLeft));
-                bLeft = (bLeft / Math.abs(fLeft));
-                bRight = (bRight / Math.abs(fLeft));
-            }
-
-            backLeft.setVelocity(motorSpeed * bLeft);
-            frontRight.setVelocity(motorSpeed * fRight);
-            backRight.setVelocity(motorSpeed * bRight);
-            frontLeft.setVelocity(motorSpeed * (-fLeft));
-
-
+            backLeft.setVelocity(Math.abs(motorSpeed * bLeft));
+            frontRight.setVelocity(Math.abs(motorSpeed * fRight));
+            backRight.setVelocity(Math.abs(motorSpeed * bRight));
+            frontLeft.setVelocity(Math.abs(motorSpeed * (fLeft)));
         }
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -184,11 +206,12 @@ public class AutoDropRev extends LinearOpMode{
         double checkTimeEnd = 0;
         servoPos = 0.85;
 
-        DcMotor lineMotor = hardwareMap.get(DcMotor.class, "leverMotor");
-        DcMotor lineMotor2 = hardwareMap.get(DcMotor.class, "backMotor");
+        DcMotorEx lineMotor = hardwareMap.get(DcMotorEx.class, "leverMotor");
+        DcMotorEx lineMotor2 = hardwareMap.get(DcMotorEx.class, "backMotor");
         DcMotor intakeMotor  = hardwareMap.get(DcMotor.class, "intakeMotor");
 
-        lineMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lineMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         lineMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         while (stage != 22) {
@@ -280,7 +303,7 @@ public class AutoDropRev extends LinearOpMode{
 
             //when time exceeds limit, start new time, switch stage, and move servo
             if (checkTimeEnd < System.currentTimeMillis() && opModeIsActive() && stage == 4) {
-                time = 650;
+                time = 750;
                 checkTime = System.currentTimeMillis();
                 checkTimeEnd = checkTime + time;
                 lineMotor.setPower(0);
@@ -317,6 +340,7 @@ public class AutoDropRev extends LinearOpMode{
     @Override
     public void runOpMode() {
 
+
         dropServo = hardwareMap.get(Servo.class, "dropServo");
 
         blockServo = hardwareMap.get(Servo.class, "blockServo");
@@ -333,29 +357,35 @@ public class AutoDropRev extends LinearOpMode{
 
         // run until the end of the match (driver presses STOP)
 
-        moveForTime(675, 270, 1);
 
-        sleep(400);
+        moveForTime(1600, 270, 0.5);
 
-        moveForTime(1750, 0, 0.6);
+        turnForTime(600, 0.6);
+
+        moveForTime(900, 270, 0.5);
 
         dropArm();
 
-        moveForTime(1450, 180, 0.6);
+        moveForTime(900, 90, 0.5);
 
-        turnForTime(650, 1);
+        turnForTime(1000, -1);
 
-        moveForTime(2725,0, 0.6);
+        moveForTime(1400, 270, 0.6);
+
+        turnForTime(335, -1);
+
+        moveForTime(750, 270, 0.6);
 
         wheelForTime(3500, 1);
 
-        moveForTime(550,180, 0.6);
+        moveForTime(200, 90, 1);
 
-        turnForTime(700, -1);
+        turnForTime(1450, 0.6);
 
-        moveForTime(800, 270, 0.6);
+        moveForTime(950, 270, 1);
 
-        moveForTime(700, 180, 0.6);
+        turnForTime(900, -0.6);
 
+        moveForTime(200, 270, 1);
     }
 }
